@@ -5,9 +5,9 @@ from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from decouple import config
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-#from db_handler.db_class import PostgresHandler
+#from sqlalchemy import create_engine
 
-#pg_db = PostgresHandler(config('PG_LINK'))
+#engine = create_engine(config('PG_LINK'), echo=True)
 scheduler = AsyncIOScheduler(timezone='Europe/Moscow')
 admins = [int(admin_id) for admin_id in config('ADMINS').split(',')]
 
