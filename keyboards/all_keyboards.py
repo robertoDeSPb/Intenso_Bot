@@ -17,12 +17,12 @@ def main_kb(user_telegram_id: int):
 
 def create_spec_kb():
     kb_list = [
-        [KeyboardButton(text='поделиться номером', request_location=True)],
+        [KeyboardButton(text='поделиться локацией', request_location=True)],
         [KeyboardButton(text='поделиться номером', request_contact=True)],
-        [KeyboardButton(text='поделиться номером', request_poll=KeyboardButtonPollType)]
+        [KeyboardButton(text='Отправить викторину или опрос', request_poll=KeyboardButtonPollType())]
     ]
     keyboard = ReplyKeyboardMarkup(
-        Keyboard=kb_list,
+        keyboard=kb_list,
         resize_keyboard=True,
         one_time_keyboard=True,
         input_field_placeholder='Воспользуйтесь специальной клавиатурой')
