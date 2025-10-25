@@ -44,7 +44,8 @@ async def get_inline_btn_back(call: CallbackQuery):
     prev = user_prev_menu.get(call.from_user.id)
     text, markup = prev
     '''
-    call.message.answer(text, reply_markup=markup)
+    #call.message.answer(text, reply_markup=markup)
+    call.message.answer('back')
 
 @start_router.callback_query(F.data == 'about_school')
 async def get_inline_btn_about(call: CallbackQuery):
