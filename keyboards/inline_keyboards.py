@@ -3,6 +3,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 def ease_link_kb():
     inline_kb_list = [
+        [InlineKeyboardButton(text='Мы в ТГ', url='https://t.me/espanol_intenso')],
         [InlineKeyboardButton(text='Мы в ВК', url='https://vk.com/espanol.intenso')],
         [InlineKeyboardButton(text='Мой ВК', url='https://vk.com/alexandersaldana')]
     ]
@@ -14,7 +15,8 @@ def main_inline_kb():
         [InlineKeyboardButton(text='📖О нас',callback_data='about_school')],
         [InlineKeyboardButton(text='📅Расписание', callback_data='schedule')],
         [InlineKeyboardButton(text='👤Профиль', callback_data='profile')],
-        [InlineKeyboardButton(text='📚Учебник', callback_data='library')]
+        [InlineKeyboardButton(text='📚Учебник', callback_data='library')],
+        [InlineKeyboardButton(text='Фото', callback_data='photo')]
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
 

@@ -1,9 +1,13 @@
 from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message, BotCommand, BotCommandScopeDefault, CallbackQuery
+from aiogram.types import Message, BotCommand, BotCommandScopeDefault, CallbackQuery, FSInputFile
+import create_bot
 from create_bot import bot
 from keyboards.all_keyboards import main_kb, create_spec_kb
 import keyboards.inline_keyboards as inline_keyboards
+from utils.my_utils import check_file
+from all_media.links import all_media_dir, FILE_IDS
+import os
 
 start_router = Router()
 #BotCommand(command='Links', description='Ссылки')
@@ -91,3 +95,27 @@ async def get_inline_btn_profile(call: CallbackQuery):
 @start_router.callback_query(F.data == 'about_school')
 async def get_inline_btn_about(call: CallbackQuery):
     await call.message.answer()
+
+@start_router.callback_query(F.data == 'library')
+async def get_inline_btn_book(call: CallbackQuery):
+    print("callback library triggered")
+    print(FILE_IDS['Prisma_A1'])
+    await call.answer(text='Ищу на полке...')
+    if await check_file(bot, FILE_IDS['Prisma_A1']):
+        await call.message.answer_document(document=FILE_IDS['Prisma_A1'], caption='Моя <u>отформатированная</u> подпись к <b>файлу</b>')
+    else:
+        cur_book = FSInputFile(path=os.path.join(all_media_dir, 'Prisma_A2 ejercicios.pdf'))
+        msg_id = await call.message.answer_document(document=cur_book)
+        FILE_IDS['Prisma_A1'] = msg_id.document.file_id
+        await check_file(bot, FILE_IDS['Prisma_A1'])
+
+@start_router.callback_query(F.data == 'photo')
+async def get_inline_btn_photo(call: CallbackQuery):
+    test_image = FSInputFile(path=os.path.join(all_media_dir, 'test_image.jpg'))
+    print(FILE_IDS['Prisma_A1'])
+    if await check_file(bot, FILE_IDS['Prisma_A1']):
+        await call.message.answer_document(document=FILE_IDS['Prisma_A1'], caption='Моя <u>отформатированная</u> подпись к <b>файлу</b>')
+    else:
+        photo_id = await call.message.answer_document(document=test_image)
+        FILE_IDS['Prisma_A1'] = photo_id.document.file_id
+        await check_file(bot, FILE_IDS['Prisma_A1'])
