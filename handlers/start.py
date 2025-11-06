@@ -6,7 +6,7 @@ from create_bot import bot
 from keyboards.all_keyboards import main_kb, create_spec_kb
 import keyboards.inline_keyboards as inline_keyboards
 from utils.my_utils import check_file
-from all_media.links import all_media_dir, FILE_IDS
+from all_media.links import all_media_dir, FILE_IDS, INTENSO_STORAGE_CHAT_ID, chat_ids
 import os
 
 start_router = Router()
@@ -15,13 +15,17 @@ start_router = Router()
 async def set_commands():
     commands = [BotCommand(command='start', description='Старт'),
                 BotCommand(command='profile', description='Мой профиль'),
-                BotCommand(command='links', description='Ссылки')]
+                BotCommand(command='links', description='Ссылки'),
+                BotCommand(command='update_lib', description='Обновить библиотеку')]
     await bot.set_my_commands(commands, BotCommandScopeDefault())
 
 @start_router.message(CommandStart())
 async def cmd_start(message: Message):
     await message.answer('Запуск сообщения по команде /start используя фильтр CommandStart()',
                         reply_markup=main_kb(message.from_user.id))
+@start_router.message()
+async def get_chat_id(message: Message):
+    chat_ids.append(Message.chat.id)
 
 #@start_router.message(Command(commands=['start2']))
 @start_router.message(Command("test"))
@@ -30,9 +34,12 @@ async def cmd_start_2(message: Message):
                         reply_markup=create_spec_kb())
 
     
-@start_router.message(F.text.lower().contains('hello'))
-async def cmd_start_3(message: Message):
-    await message.answer('Привет!', reply_markup=inline_keyboards.iease_link_kb())
+@start_router.message(Command("update_lib"))
+async def update_library(call: CallbackQuery):
+    cur_book = FSInputFile(path=os.path.join(all_media_dir, 'Prisma_A2_ejercicios.pdf'))
+    msg = await bot.send_document(chat_id=INTENSO_STORAGE_CHAT_ID, document=cur_book)
+    FILE_IDS['Prisma_A2_ejercicios.pdf'] = msg.document.file_id
+    await call.answer('LIbrary is updated')
 
 @start_router.message(Command(commands=['links']))
 async def get_inline_btn_link(message: Message):
@@ -98,8 +105,7 @@ async def get_inline_btn_about(call: CallbackQuery):
 
 @start_router.callback_query(F.data == 'library')
 async def get_inline_btn_book(call: CallbackQuery):
-    print("callback library triggered")
-    print(FILE_IDS['Prisma_A1'])
+    '''
     await call.answer(text='Ищу на полке...')
     if await check_file(bot, FILE_IDS['Prisma_A1']):
         await call.message.answer_document(document=FILE_IDS['Prisma_A1'], caption='Моя <u>отформатированная</u> подпись к <b>файлу</b>')
@@ -108,14 +114,11 @@ async def get_inline_btn_book(call: CallbackQuery):
         msg_id = await call.message.answer_document(document=cur_book)
         FILE_IDS['Prisma_A1'] = msg_id.document.file_id
         await check_file(bot, FILE_IDS['Prisma_A1'])
+    '''
+    await bot.forward_message(
+        user_id = call.from_user.id,
+        chat_id=chat_ids.pop,
+        from_chat_id=INTENSO_STORAGE_CHAT_ID
+        message_id=FILE_IDS['Prisma_A2_ejercicios']
+    )
 
-@start_router.callback_query(F.data == 'photo')
-async def get_inline_btn_photo(call: CallbackQuery):
-    test_image = FSInputFile(path=os.path.join(all_media_dir, 'test_image.jpg'))
-    print(FILE_IDS['Prisma_A1'])
-    if await check_file(bot, FILE_IDS['Prisma_A1']):
-        await call.message.answer_document(document=FILE_IDS['Prisma_A1'], caption='Моя <u>отформатированная</u> подпись к <b>файлу</b>')
-    else:
-        photo_id = await call.message.answer_document(document=test_image)
-        FILE_IDS['Prisma_A1'] = photo_id.document.file_id
-        await check_file(bot, FILE_IDS['Prisma_A1'])
