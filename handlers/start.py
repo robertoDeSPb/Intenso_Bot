@@ -21,11 +21,15 @@ async def set_commands():
 
 @start_router.message(CommandStart())
 async def cmd_start(message: Message):
+    print(message.chat.id)
+    chat_ids.append(message.chat.id)
     await message.answer('Запуск сообщения по команде /start используя фильтр CommandStart()',
                         reply_markup=main_kb(message.from_user.id))
+'''
 @start_router.message()
 async def get_chat_id(message: Message):
-    chat_ids.append(Message.chat.id)
+    chat_ids.append(message.chat.id)
+'''
 
 #@start_router.message(Command(commands=['start2']))
 @start_router.message(Command("test"))
@@ -37,8 +41,9 @@ async def cmd_start_2(message: Message):
 @start_router.message(Command("update_lib"))
 async def update_library(call: CallbackQuery):
     cur_book = FSInputFile(path=os.path.join(all_media_dir, 'Prisma_A2_ejercicios.pdf'))
-    msg = await bot.send_document(chat_id=INTENSO_STORAGE_CHAT_ID, document=cur_book)
-    FILE_IDS['Prisma_A2_ejercicios.pdf'] = msg.document.file_id
+    msg = await bot.send_document(chat_id=INTENSO_STORAGE_CHAT_ID, document=cur_book, request_timeout=300)
+    FILE_IDS['Prisma_A2_ejercicios'] = msg.message_id
+    print(FILE_IDS["Prisma_A2_ejercicios"])
     await call.answer('LIbrary is updated')
 
 @start_router.message(Command(commands=['links']))
@@ -116,9 +121,8 @@ async def get_inline_btn_book(call: CallbackQuery):
         await check_file(bot, FILE_IDS['Prisma_A1'])
     '''
     await bot.forward_message(
-        user_id = call.from_user.id,
-        chat_id=chat_ids.pop,
-        from_chat_id=INTENSO_STORAGE_CHAT_ID
+        chat_id=chat_ids.pop(),
+        from_chat_id=INTENSO_STORAGE_CHAT_ID,
         message_id=FILE_IDS['Prisma_A2_ejercicios']
     )
 

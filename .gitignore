@@ -13,3 +13,4 @@ wheels/
 .vscode/
 *.pdf
 *.jpg
+*.json
