@@ -6,8 +6,9 @@ from create_bot import bot
 from keyboards.all_keyboards import main_kb, create_spec_kb
 import keyboards.inline_keyboards as inline_keyboards
 from utils.my_utils import check_file
-from all_media.links import all_media_dir, FILE_IDS, INTENSO_STORAGE_CHAT_ID, chat_ids
+from all_media.links import all_media_dir, INTENSO_STORAGE_CHAT_ID
 import os
+from db_handler.json_management import read_credentials, add_credentials
 
 start_router = Router()
 #BotCommand(command='Links', description='Ссылки')
@@ -22,14 +23,13 @@ async def set_commands():
 @start_router.message(CommandStart())
 async def cmd_start(message: Message):
     print(message.chat.id)
-    chat_ids.append(message.chat.id)
+    print(message.from_user.id)
+    chats = {}
+    #
+    chats[str(message.from_user.id)] = message.chat.id
+    add_credentials(chats, filename=os.path.join(all_media_dir, "users_chats.json"))
     await message.answer('Запуск сообщения по команде /start используя фильтр CommandStart()',
                         reply_markup=main_kb(message.from_user.id))
-'''
-@start_router.message()
-async def get_chat_id(message: Message):
-    chat_ids.append(message.chat.id)
-'''
 
 #@start_router.message(Command(commands=['start2']))
 @start_router.message(Command("test"))
@@ -42,8 +42,10 @@ async def cmd_start_2(message: Message):
 async def update_library(call: CallbackQuery):
     cur_book = FSInputFile(path=os.path.join(all_media_dir, 'Prisma_A2_ejercicios.pdf'))
     msg = await bot.send_document(chat_id=INTENSO_STORAGE_CHAT_ID, document=cur_book, request_timeout=300)
-    FILE_IDS['Prisma_A2_ejercicios'] = msg.message_id
-    print(FILE_IDS["Prisma_A2_ejercicios"])
+    #
+    library_dict = {}
+    library_dict["Prisma_A2_ejercicios"] = msg.message_id
+    add_credentials(library_dict, filename=os.path.join(all_media_dir, "libraries.json"))
     await call.answer('LIbrary is updated')
 
 @start_router.message(Command(commands=['links']))
@@ -120,9 +122,11 @@ async def get_inline_btn_book(call: CallbackQuery):
         FILE_IDS['Prisma_A1'] = msg_id.document.file_id
         await check_file(bot, FILE_IDS['Prisma_A1'])
     '''
+    call.from_user.id
+    all_chats_dict = read_credentials(filename=os.path.join(all_media_dir, "users_chats.json"))
+    all_libs_dict = read_credentials(filename=os.path.join(all_media_dir, "libraries.json"))
     await bot.forward_message(
-        chat_id=chat_ids.pop(),
+        chat_id=all_chats_dict[str(call.from_user.id)],
         from_chat_id=INTENSO_STORAGE_CHAT_ID,
-        message_id=FILE_IDS['Prisma_A2_ejercicios']
+        message_id=all_libs_dict["Prisma_A2_ejercicios"]
     )
-
