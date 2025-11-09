@@ -1,5 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.filters.callback_data import CallbackData
 
 def ease_link_kb():
     inline_kb_list = [
@@ -33,6 +34,21 @@ def inline_kb_profile():
         [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
+
+class CourseCallBack(CallbackData, prefix="course"):
+    level: str
+    action: str
+
+def inline_kb_library_level():
+    inline_kb_list = [
+        [InlineKeyboardButton(text='Для моей группы', callback_data='user_library')],
+        [InlineKeyboardButton(text='A1', callback_data=CourseCallBack("A1", "library").pack())],
+        [InlineKeyboardButton(text='A2', callback_data='A2_library')],
+        [InlineKeyboardButton(text='B1', callback_data='B1_library')],
+        [InlineKeyboardButton(text='B2', callback_data='B1_library')],
+        [InlineKeyboardButton(text='С1', callback_data='B1_library')]
+        [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
+    ]
 
 def inline_kb_library_level():
     inline_kb_list = [
