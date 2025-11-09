@@ -40,11 +40,13 @@ async def cmd_start_2(message: Message):
     
 @start_router.message(Command("update_lib"))
 async def update_library(call: CallbackQuery):
-    cur_book = FSInputFile(path=os.path.join(all_media_dir, 'Prisma_A2_ejercicios.pdf'))
-    msg = await bot.send_document(chat_id=INTENSO_STORAGE_CHAT_ID, document=cur_book, request_timeout=300)
-    #
+    book_list = ["Prisma_A1.pdf", "Prisma_A1_ejercicios.pdf", "Prisma_A2.pdf", "Prisma_A2_ejercicios.pdf", "Prisma_B1.pdf", "Prisma_B1_ejercicios.pdf"]
     library_dict = {}
-    library_dict["Prisma_A2_ejercicios"] = msg.message_id
+    for book in book_list:
+        cur_book = FSInputFile(path=os.path.join(all_media_dir, book))
+        msg = await bot.send_document(chat_id=INTENSO_STORAGE_CHAT_ID, document=cur_book, request_timeout=300)
+        library_dict[book] = msg.message_id
+    #
     add_credentials(library_dict, filename=os.path.join(all_media_dir, "libraries.json"))
     await call.answer('LIbrary is updated')
 
@@ -112,17 +114,6 @@ async def get_inline_btn_about(call: CallbackQuery):
 
 @start_router.callback_query(F.data == 'library')
 async def get_inline_btn_book(call: CallbackQuery):
-    '''
-    await call.answer(text='Ищу на полке...')
-    if await check_file(bot, FILE_IDS['Prisma_A1']):
-        await call.message.answer_document(document=FILE_IDS['Prisma_A1'], caption='Моя <u>отформатированная</u> подпись к <b>файлу</b>')
-    else:
-        cur_book = FSInputFile(path=os.path.join(all_media_dir, 'Prisma_A2 ejercicios.pdf'))
-        msg_id = await call.message.answer_document(document=cur_book)
-        FILE_IDS['Prisma_A1'] = msg_id.document.file_id
-        await check_file(bot, FILE_IDS['Prisma_A1'])
-    '''
-    call.from_user.id
     all_chats_dict = read_credentials(filename=os.path.join(all_media_dir, "users_chats.json"))
     all_libs_dict = read_credentials(filename=os.path.join(all_media_dir, "libraries.json"))
     await bot.forward_message(
@@ -130,3 +121,8 @@ async def get_inline_btn_book(call: CallbackQuery):
         from_chat_id=INTENSO_STORAGE_CHAT_ID,
         message_id=all_libs_dict["Prisma_A2_ejercicios"]
     )
+#дописаать пересылкку книг через switch case
+from keyboards.inline_keyboards import CourseCallBack
+@start_router.callback_query(CourseCallBack.filter())
+async def get_needed_library(callback: CallbackQuery, callback_data: CourseCallBack):
+    switch
