@@ -114,6 +114,8 @@ async def get_inline_btn_about(call: CallbackQuery):
 
 @start_router.callback_query(F.data == 'library')
 async def get_inline_btn_book(call: CallbackQuery):
+    call.answer('A1', reply_markup=inline_keyboards.inline_kb_library_level())
+    '''
     all_chats_dict = read_credentials(filename=os.path.join(all_media_dir, "users_chats.json"))
     all_libs_dict = read_credentials(filename=os.path.join(all_media_dir, "libraries.json"))
     await bot.forward_message(
@@ -121,8 +123,20 @@ async def get_inline_btn_book(call: CallbackQuery):
         from_chat_id=INTENSO_STORAGE_CHAT_ID,
         message_id=all_libs_dict["Prisma_A2_ejercicios"]
     )
+    '''
 #дописаать пересылкку книг через switch case
 from keyboards.inline_keyboards import CourseCallBack
+from utils.my_utils import forward_library
 @start_router.callback_query(CourseCallBack.filter())
-async def get_needed_library(callback: CallbackQuery, callback_data: CourseCallBack):
-    switch
+async def get_needed_library(call: CallbackQuery, callback_data: CourseCallBack):
+    current_case = CourseCallBack.level
+    match current_case:
+        case "A1":
+            print("Prisma_A1.pdf")
+            forward_library(callback_data.level, call)
+        case "A2":
+            print("Prisma_A2.pdf")
+            forward_library(callback_data.level, call)
+        case "B1":
+            print("Prisma_B1.pdf")
+            forward_library(callback_data.level, call)

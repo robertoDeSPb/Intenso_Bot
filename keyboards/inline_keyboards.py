@@ -43,13 +43,14 @@ def inline_kb_library_level():
     inline_kb_list = [
         [InlineKeyboardButton(text='Для моей группы', callback_data='user_library')],
         [InlineKeyboardButton(text='A1', callback_data=CourseCallBack("A1", "library").pack())],
-        [InlineKeyboardButton(text='A2', callback_data='A2_library')],
-        [InlineKeyboardButton(text='B1', callback_data='B1_library')],
-        [InlineKeyboardButton(text='B2', callback_data='B1_library')],
-        [InlineKeyboardButton(text='С1', callback_data='B1_library')]
+        [InlineKeyboardButton(text='A2', callback_data=CourseCallBack("A2", "library"))],
+        [InlineKeyboardButton(text='B1', callback_data=CourseCallBack("B1", "library"))],
+        [InlineKeyboardButton(text='B2', callback_data=CourseCallBack("B2", "library"))],
+        [InlineKeyboardButton(text='С1', callback_data=CourseCallBack("C1", "library"))]
         [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
     ]
-
+# тестирую класс CallbackData
+'''
 def inline_kb_library_level():
     inline_kb_list = [
         [InlineKeyboardButton(text='Для моей группы', callback_data='user_library')],
@@ -60,6 +61,7 @@ def inline_kb_library_level():
         [InlineKeyboardButton(text='С1', callback_data='B1_library')]
         [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
     ]
+'''
 
 def inline_kb_library_choice():
     inline_kb_list = [
