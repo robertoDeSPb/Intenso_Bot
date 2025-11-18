@@ -19,13 +19,19 @@ from aiogram.types import CallbackQuery
 async def forward_library(level: str, call: CallbackQuery):
     all_chats_dict = read_credentials(filename=os.path.join(all_media_dir, "users_chats.json"))
     all_libs_dict = read_credentials(filename=os.path.join(all_media_dir, "libraries.json"))
-    await bot.forward_message(
-        chat_id=all_chats_dict[str(call.from_user.id)],
-        from_chat_id=INTENSO_STORAGE_CHAT_ID,
-        message_id=all_libs_dict["Prisma_" + level + ".pdf"]
-    )
-    await bot.forward_message(
-        chat_id=all_chats_dict[str(call.from_user.id)],
-        from_chat_id=INTENSO_STORAGE_CHAT_ID,
-        message_id=all_libs_dict["Prisma_" + level + "_ejercicios.pdf"]
-    )
+    try:
+        await bot.forward_message(
+            chat_id=all_chats_dict[str(call.from_user.id)],
+            from_chat_id=INTENSO_STORAGE_CHAT_ID,
+            message_id=all_libs_dict["Prisma_" + level + ".pdf"]
+        )
+    except KeyError:
+        print(f"Ошибка: Ключ Prisma_'{level}'.pdf не найден в словаре libraries.json.")
+    try:
+        await bot.forward_message(
+            chat_id=all_chats_dict[str(call.from_user.id)],
+            from_chat_id=INTENSO_STORAGE_CHAT_ID,
+            message_id=all_libs_dict["Prisma_" + level + "_ejercicios.pdf"]
+        )
+    except KeyError:
+        print(f"Ошибка: Ключ Prisma_'{level}'_ejercicios.pdf не найден в словаре libraries.json.")

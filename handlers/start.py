@@ -37,19 +37,6 @@ async def cmd_start_2(message: Message):
     await message.answer('Запуск сообщения по команде /test используя фильтр Command()',
                         reply_markup=create_spec_kb())
 
-    
-@start_router.message(Command("update_lib"))
-async def update_library(call: CallbackQuery):
-    book_list = ["Prisma_A1.pdf", "Prisma_A1_ejercicios.pdf", "Prisma_A2.pdf", "Prisma_A2_ejercicios.pdf", "Prisma_B1.pdf", "Prisma_B1_ejercicios.pdf"]
-    library_dict = {}
-    for book in book_list:
-        cur_book = FSInputFile(path=os.path.join(all_media_dir, book))
-        msg = await bot.send_document(chat_id=INTENSO_STORAGE_CHAT_ID, document=cur_book, request_timeout=300)
-        library_dict[book] = msg.message_id
-    #
-    add_credentials(library_dict, filename=os.path.join(all_media_dir, "libraries.json"))
-    await call.answer('LIbrary is updated')
-
 @start_router.message(Command(commands=['links']))
 async def get_inline_btn_link(message: Message):
     await message.answer('Ссылки на наши ресурсы', reply_markup=inline_keyboards.ease_link_kb())
@@ -69,7 +56,7 @@ async def get_inline_btn_back(call: CallbackQuery):
 
 @start_router.callback_query(F.data == 'about_school')
 async def get_inline_btn_about(call: CallbackQuery):
-    await call.message.answer()
+    await call.answer()
 
 @start_router.callback_query(F.data == 'schedule')
 async def get_inline_btn_shedule(call: CallbackQuery):
@@ -114,29 +101,30 @@ async def get_inline_btn_about(call: CallbackQuery):
 
 @start_router.callback_query(F.data == 'library')
 async def get_inline_btn_book(call: CallbackQuery):
-    call.answer('A1', reply_markup=inline_keyboards.inline_kb_library_level())
-    '''
-    all_chats_dict = read_credentials(filename=os.path.join(all_media_dir, "users_chats.json"))
-    all_libs_dict = read_credentials(filename=os.path.join(all_media_dir, "libraries.json"))
-    await bot.forward_message(
-        chat_id=all_chats_dict[str(call.from_user.id)],
-        from_chat_id=INTENSO_STORAGE_CHAT_ID,
-        message_id=all_libs_dict["Prisma_A2_ejercicios"]
-    )
-    '''
-#дописаать пересылкку книг через switch case
+    print("inline_kb_library_level keyboard selected")
+    #call.answer('A1', reply_markup=inline_keyboards.inline_kb_library_level())
+    await call.message.edit_text('Выбор литературы', reply_markup=inline_keyboards.inline_kb_library_level())
+    await call.answer()
+    
 from keyboards.inline_keyboards import CourseCallBack
 from utils.my_utils import forward_library
 @start_router.callback_query(CourseCallBack.filter())
 async def get_needed_library(call: CallbackQuery, callback_data: CourseCallBack):
-    current_case = CourseCallBack.level
-    match current_case:
-        case "A1":
-            print("Prisma_A1.pdf")
-            forward_library(callback_data.level, call)
-        case "A2":
-            print("Prisma_A2.pdf")
-            forward_library(callback_data.level, call)
-        case "B1":
-            print("Prisma_B1.pdf")
-            forward_library(callback_data.level, call)
+    current_case = callback_data.level
+    if (current_case == "A1"):
+        await forward_library(callback_data.level, call)
+        await call.answer()
+    elif (current_case == "A2"):
+        await forward_library(callback_data.level, call)
+        await call.answer()
+    elif (current_case == "B1"):
+        await forward_library(callback_data.level, call)
+        await call.answer()
+    elif (current_case == "B2"):
+        await forward_library(callback_data.level, call)
+        await call.answer()
+    elif (current_case == "C1"):
+        await forward_library(callback_data.level, call)
+        await call.answer()
+    else:
+        print (current_case)

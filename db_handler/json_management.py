@@ -22,12 +22,8 @@ def add_credentials(current_dict, filename: str):
 
     with open(file=os.path.join(all_media_dir, filename), mode="w") as f:
         if (len(library_dict) == 0):
-            print("dict is empty")
             json.dump(current_dict, f)    
         else:
-            print("dict does not empty")
-            print(current_dict)
-            print(library_dict)
             library_dict.update(current_dict)
             json.dump(library_dict, f)
 

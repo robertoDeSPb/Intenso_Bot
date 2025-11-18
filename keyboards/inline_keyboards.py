@@ -41,15 +41,18 @@ class CourseCallBack(CallbackData, prefix="course"):
 
 def inline_kb_library_level():
     inline_kb_list = [
-        [InlineKeyboardButton(text='Для моей группы', callback_data='user_library')],
-        [InlineKeyboardButton(text='A1', callback_data=CourseCallBack("A1", "library").pack())],
-        [InlineKeyboardButton(text='A2', callback_data=CourseCallBack("A2", "library"))],
-        [InlineKeyboardButton(text='B1', callback_data=CourseCallBack("B1", "library"))],
-        [InlineKeyboardButton(text='B2', callback_data=CourseCallBack("B2", "library"))],
-        [InlineKeyboardButton(text='С1', callback_data=CourseCallBack("C1", "library"))]
+        #[InlineKeyboardButton(text='Для моей группы', callback_data='user_library')],
+        [InlineKeyboardButton(text='A1', callback_data=CourseCallBack(level="A1", action="library").pack())],
+        [InlineKeyboardButton(text='A2', callback_data=CourseCallBack(level="A2", action="library").pack())],
+        [InlineKeyboardButton(text='B1', callback_data=CourseCallBack(level="B1", action="library").pack())],
+        [InlineKeyboardButton(text='B2', callback_data=CourseCallBack(level="B2", action="library").pack())],
+        [InlineKeyboardButton(text='С1', callback_data=CourseCallBack(level="C1", action="library").pack())],
         [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
     ]
+    return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
+
 # тестирую класс CallbackData
+
 '''
 def inline_kb_library_level():
     inline_kb_list = [
@@ -58,7 +61,7 @@ def inline_kb_library_level():
         [InlineKeyboardButton(text='A2', callback_data='A2_library')],
         [InlineKeyboardButton(text='B1', callback_data='B1_library')],
         [InlineKeyboardButton(text='B2', callback_data='B1_library')],
-        [InlineKeyboardButton(text='С1', callback_data='B1_library')]
+        [InlineKeyboardButton(text='С1', callback_data='B1_library')],
         [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
     ]
 '''
