@@ -23,7 +23,8 @@ def main_inline_kb():
 def inline_kb_schedule():
     inline_kb_list = [
         [InlineKeyboardButton(text='Моя группа', callback_data='my_group')],
-        [InlineKeyboardButton(text='Общее', callback_data='general_schedule')]
+        [InlineKeyboardButton(text='Общее', callback_data='general_schedule')],
+        [InlineKeyboardButton(text='Назад', callback_data='back')]
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
 
@@ -31,7 +32,13 @@ def inline_kb_profile():
     inline_kb_list = [
         [InlineKeyboardButton(text='Учебник', callback_data='user_library')],
         [InlineKeyboardButton(text='Расписание', callback_data='my_group')],
-        [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
+        [InlineKeyboardButton(text='Назад', callback_data='back')]
+    ]
+    return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
+
+def inline_kb_back():
+    inline_kb_list = [
+        [InlineKeyboardButton(text='Назад', callback_data='back')]
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
 
@@ -47,7 +54,7 @@ def inline_kb_library_level():
         [InlineKeyboardButton(text='B1', callback_data=CourseCallBack(level="B1", action="library").pack())],
         [InlineKeyboardButton(text='B2', callback_data=CourseCallBack(level="B2", action="library").pack())],
         [InlineKeyboardButton(text='С1', callback_data=CourseCallBack(level="C1", action="library").pack())],
-        [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
+        [InlineKeyboardButton(text='Назад', callback_data='back')]
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
 
@@ -70,5 +77,5 @@ def inline_kb_library_choice():
     inline_kb_list = [
         [InlineKeyboardButton(text='Prisma', callback_data='prisma')],
         [InlineKeyboardButton(text='Libro del ejercicios', callback_data='ejercicios')],
-        [InlineKeyboardButton(text='Назад', callback_data='back_to_menu')]
+        [InlineKeyboardButton(text='Назад', callback_data='back')]
     ]

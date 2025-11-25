@@ -5,7 +5,7 @@ from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from decouple import config
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-#from sqlalchemy import create_engine
+from aiogram.fsm.storage.memory import MemoryStorage
 
 #engine = create_engine(config('PG_LINK'), echo=True)
 scheduler = AsyncIOScheduler(timezone='Europe/Moscow')
@@ -15,4 +15,4 @@ logging.basicConfig(level=logging.INFO, format ='%(asctime)s - %(name)s - %(leve
 logger = logging.getLogger(__name__)
 #user_prev_menu = {}
 bot = Bot(token=config('TOKEN'), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-dp = Dispatcher()
+dp = Dispatcher(storage=MemoryStorage())
