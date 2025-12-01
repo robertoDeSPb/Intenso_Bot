@@ -1,3 +1,4 @@
+import asyncio
 from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, BotCommand, BotCommandScopeDefault, CallbackQuery, FSInputFile
@@ -9,9 +10,10 @@ from utils.my_utils import push, pop, open_screen
 from all_media.links import all_media_dir, INTENSO_STORAGE_CHAT_ID
 import os
 from db_handler.json_management import read_credentials, add_credentials
-from utils.classes import NavState
+from utils.classes import NavState, RegForm
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State
+from aiogram.utils.chat_action import ChatActionSender
 
 start_router = Router()
 #BotCommand(command='Links', description='Ссылки')
@@ -23,13 +25,17 @@ async def set_commands():
     await bot.set_my_commands(commands, BotCommandScopeDefault())
 
 @start_router.message(CommandStart())
-async def cmd_start(message: Message):
+async def cmd_start(message: Message, state: FSMContext):
+    await state.clear()
     chats = {}
     chats[str(message.from_user.id)] = message.chat.id
     add_credentials(chats, filename=os.path.join(all_media_dir, "users_chats.json"))
-    await message.answer('Регистрация в боте...')
-    #await message.answer('Запуск сообщения по команде /start используя фильтр CommandStart()',
-    #                    reply_markup=main_kb(message.from_user.id))
+    await state.update_data(user_id=message.chat.id)
+    await state.update_data(username=message.from_user.username)
+    async with ChatActionSender.typing(bot=bot, chat_id=message.chat.id):
+        await asyncio.sleep(2)
+        await message.answer('¡Hola! Укажи свое имя и фамилию на латинице:')
+    await state.set_state(RegForm.name)
 
 @start_router.message(Command(commands=['links']))
 async def get_inline_btn_link(message: Message, state: FSMContext):
@@ -39,7 +45,8 @@ async def get_inline_btn_link(message: Message, state: FSMContext):
 async def get_inline_btn_menu(message: Message, state: FSMContext):
     await state.set_state(NavState.navigation)
     await state.update_data(stack=["main_menu"])
-    await message.answer('Меню', reply_markup=inline_keyboards.main_inline_kb())
+    user_id = await message.chat.id
+    await message.answer('Меню', reply_markup=inline_keyboards.main_inline_kb(user_id))
 
 @start_router.callback_query(F.data == 'back')
 async def get_inline_btn_back(call: CallbackQuery, state: FSMContext):

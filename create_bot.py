@@ -6,8 +6,15 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from decouple import config
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from aiogram.fsm.storage.memory import MemoryStorage
+from sqlalchemy import create_engine, text
 
-#engine = create_engine(config('PG_LINK'), echo=True)
+engine = create_engine(config("PG_LINK"))
+with engine.connect() as conn:
+    conn.execute(text("CREATE DATABASE IF NOT EXISTS IntensoBot"))
+    conn.commit()
+
+engine = create_engine(config("PG_LINK") + "/IntensoBot", echo=False, future=True)
+
 scheduler = AsyncIOScheduler(timezone='Europe/Moscow')
 admins = [int(admin_id) for admin_id in config('ADMINS').split(',')]
 

@@ -1,30 +1,39 @@
 from decouple import config
 import sqlalchemy as db
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, select
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
 from create_bot import engine
 
 Base = declarative_base()
 
-class User(Base):
+class UserBase(Base):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True)
-    username = Column(String, nullable=False)
-    number = Column(Integer, primary_key=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    username: Mapped[str] = mapped_column(String, nullable=True)
+    telegram_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    lastname: Mapped[str] = mapped_column(String, nullable=False)
+    number: Mapped[int] = mapped_column(Integer, nullable=True)
 
     def __repr__(self):
         return f'user(id={self.id!r}, username={self.username!r}, number={self.number!r})'
 
 #пока добавление только для 1 строки
-def insert_into(tg_user: User):
+def add_user(username, name, lastname, number):
     with Session(engine) as session:
-        session.add(User)
+        user = UserBase(
+            username=username,
+            name=name,
+            lastname=lastname,
+            number=number
+        )
+        session.add(user)
         session.commit()
+        return user.id
 
-def select_from(stmt):
+def fetch_users():
     with Session(engine) as session:
-        return [row for row in session.scalars(stmt)]
-  
+        stmt = select(UserBase)
+        return list(session.scalars(stmt))
